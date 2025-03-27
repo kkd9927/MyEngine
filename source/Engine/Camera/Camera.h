@@ -1,43 +1,52 @@
-#pragma once
+﻿#pragma once
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-enum CameraMovement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
-};
-
-class Camera
+namespace Engine
 {
-private:
-    glm::vec3 position;
-    glm::vec3 front;
-    glm::vec3 up;
-    glm::vec3 right;
-    glm::vec3 worldUp;
-    float yaw;
-    float pitch;
-    float movementSpeed;
-    float mouseSensitivity;
-    float pov;
+    enum class ECameraMovement {
+        FORWARD,
+        BACKWARD,
+        LEFT,
+        RIGHT
+    };
 
-public:
-    explicit Camera(glm::vec3 position);
-    Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
-    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
-    ~Camera() = default;
+    class Camera
+    {
+    public:
+        explicit Camera(glm::vec3 position);
+        explicit Camera(float x, float y, float z);
+        // Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
+        // Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
+        ~Camera() = default;
 
-    void processKeyboard(CameraMovement direction, float deltaTime);
-    void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
-    void processMouseScroll(float yoffset);
-    glm::mat4 getViewMatrix() const { return glm::lookAt(position, position + front, up); }
-    float getPov() { return pov; }
+        void ProcessKeyboard(ECameraMovement direction, float deltaTime);
+        void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
+        void ProcessMouseScroll(float yoffset);
+        glm::mat4 GetViewMatrix() const { return glm::lookAt(position, position + front, up); }
+        float GetPov() { return pov; }
+        float GetLastX() const { return lastX; }
+        float GetLastY() const { return lastY; }
+        void SetLastX(float x) { lastX = x; }
+        void SetLastY(float y) { lastY = y; }
 
-private:
-    void updateCameraVectors();
+    private:
+        glm::vec3 position;
+        glm::vec3 front;
+        glm::vec3 up;
+        glm::vec3 right;
+        glm::vec3 worldUp;
+        float yaw;
+        float pitch;
+        float movementSpeed;
+        float mouseSensitivity;
+        float pov;
 
-};
+        float lastX;
+        float lastY;
+
+        void UpdateCameraVectors();
+    };
+}

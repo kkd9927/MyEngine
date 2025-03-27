@@ -1,65 +1,36 @@
-#pragma once
+﻿#pragma once
 
-#include <glad/glad.h>
-#include <glfw/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <unordered_map>
+#include <string>
 
-#include <iostream>
-#include <utility>
-#include <cstdlib>
-#include <vector>
+#include "Engine/Camera/Camera.h"
+#include "API/OpenGL/OpenGL.h"
+#include "Util/Header/Common.h"
 
-#include "Shader.h"
-#include "Camera.h"
-
-using namespace std;
-
-class Renderer
+namespace Engine
 {
-private:
-	ResourceManager* resourceManager;
-	Shader* shader;
-	GLFWwindow* window;
-	Camera* camera;
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
-	vector<unsigned int> textureIds;
-	
-	int screenWidth;
-	int screenHeight;
-	bool firstMouse;
-	float lastX;
-	float lastY;
+	class Renderer
+	{
+	public:
+		static Renderer& GetInstance();
+		bool ShouldAPIClose();
+		void Close();
 
-	Renderer();
-	Renderer(const Renderer&) = delete;
-	Renderer& operator=(const Renderer&) = delete;
-	~Renderer();
+		void DrawCall();
 
-public:
-	static Renderer& getInstance();
-	bool isClose() const;
-	void bufferInitialize();
-	const unsigned int getTextureIdByIndex(size_t index) const { return textureIds[index]; };
-	Shader& getShader() const { return *shader; }
-	GLFWwindow& getWindow() const { return *window; }
-	Camera& getCamera() const { return *camera; }
-	unsigned int getVAO() { return VAO; }
-	unsigned int getVBO() { return VBO; }
-	unsigned int getEBO() { return EBO; }
+		uint32_t GetTextureIdByName(const std::string& textureName) const;
+		void SetCurrentCamera(Camera& camera) { currentCamera = &camera; };
+		Camera& GetCurrentCamera() const { return *currentCamera; }
 
-	int getScreenWidth() const { return screenWidth; }
-	int getScreenHeight() const { return screenHeight; }
-	void setScreenWidth(int width) { screenWidth = width; }
-	void setScreenHeight(int height) { screenHeight = height; }
-	bool isFirstMouse() { return firstMouse; }
-	void setFirstMouse(bool param) { firstMouse = param; }
-	float getLastX() const { return lastX; }
-	float getLastY() const { return lastY; }
-	void setLastX(float x) { lastX = x; }
-	void setLastY(float y) { lastY = y; }
+	private:
+		API::OpenGL api;
+		Camera* currentCamera;
+		std::unordered_map<std::string, uint32_t> textureMap;
 
-};
+		Renderer();
+		~Renderer();
+
+		Renderer(const Renderer&) = delete;
+		Renderer& operator=(const Renderer&) = delete;
+	};
+}
