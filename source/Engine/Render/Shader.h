@@ -1,93 +1,37 @@
-#pragma once
+﻿#pragma once
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 
-#include "ResourceManager.h"
-#include "ResourceType.h"
+#include "Util/Header/Common.h"
 
-using namespace std;
-
-class Shader
+namespace Engine
 {
-private:
-	unsigned int shaderId;
-public:
-    Shader(const string& vertexName, const string& fragmentName);
-    
-    ~Shader()
+    class Shader
     {
-        glDeleteProgram(shaderId);
-    }
+    public:
+        void Use() const { glUseProgram(shaderId); }
+        uint32_t GetShaderId() { return shaderId; }
+        void SetShaderId(uint32_t id) { shaderId = id; }
 
-    void use() const
-    {
-        glUseProgram(shaderId);
-    }
+        void SetBool(const std::string& name, bool value) const;
+        void SetInt(const std::string& name, int value) const;
+        void SetFloat(const std::string& name, float value) const;
+        void SetVec2(const std::string& name, const glm::vec2& value) const;
+        void SetVec2(const std::string& name, float x, float y) const;
+        void SetVec3(const std::string& name, const glm::vec3& value) const;
+        void SetVec3(const std::string& name, float x, float y, float z) const;
+        void SetVec4(const std::string& name, const glm::vec4& value) const;
+        void SetVec4(const std::string& name, float x, float y, float z, float w) const;
+        void SetMat2(const std::string& name, const glm::mat2& mat) const;
+        void SetMat3(const std::string& name, const glm::mat3& mat) const;
+        void SetMat4(const std::string& name, const glm::mat4& mat) const;
 
-    unsigned int getShaderId() { return shaderId; }
+        Shader();
+        ~Shader() { glDeleteProgram(shaderId); }
 
-    void setBool(const string& name, bool value) const
-    {
-        glUniform1i(glGetUniformLocation(shaderId, name.c_str()), (int)value);
-    }
-
-    void setInt(const string& name, int value) const
-    {
-        glUniform1i(glGetUniformLocation(shaderId, name.c_str()), value);
-    }
-
-    void setFloat(const string& name, float value) const
-    {
-        glUniform1f(glGetUniformLocation(shaderId, name.c_str()), value);
-    }
-
-    void setVec2(const string& name, const glm::vec2& value) const
-    {
-        glUniform2fv(glGetUniformLocation(shaderId, name.c_str()), 1, &value[0]);
-    }
-    void setVec2(const string& name, float x, float y) const
-    {
-        glUniform2f(glGetUniformLocation(shaderId, name.c_str()), x, y);
-    }
-
-    void setVec3(const string& name, const glm::vec3& value) const
-    {
-        glUniform3fv(glGetUniformLocation(shaderId, name.c_str()), 1, &value[0]);
-    }
-    void setVec3(const string& name, float x, float y, float z) const
-    {
-        glUniform3f(glGetUniformLocation(shaderId, name.c_str()), x, y, z);
-    }
-
-    void setVec4(const string& name, const glm::vec4& value) const
-    {
-        glUniform4fv(glGetUniformLocation(shaderId, name.c_str()), 1, &value[0]);
-    }
-    void setVec4(const string& name, float x, float y, float z, float w) const
-    {
-        glUniform4f(glGetUniformLocation(shaderId, name.c_str()), x, y, z, w);
-    }
-
-    void setMat2(const string& name, const glm::mat2& mat) const
-    {
-        glUniformMatrix2fv(glGetUniformLocation(shaderId, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-    }
-
-    void setMat3(const string& name, const glm::mat3& mat) const
-    {
-        glUniformMatrix3fv(glGetUniformLocation(shaderId, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-    }
-
-    void setMat4(const string& name, const glm::mat4& mat) const
-    {
-        glUniformMatrix4fv(glGetUniformLocation(shaderId, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-    }
-};
+    private:
+        uint32_t shaderId;
+    };
+}
